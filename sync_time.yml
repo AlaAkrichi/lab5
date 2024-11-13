@@ -1,0 +1,20 @@
+---
+- name: Configuration NTP time sync
+  hosts: all
+  become : true
+  tasks:
+    - name: Install the required ntp package
+      ansible.builtin.apt: 
+        name: "ntp"
+        state: present
+    - name: Configuration NTP with pool.ntp.org
+      lineinfile:
+        path: /etc/ntp.conf
+        regexp: '^server'
+        line: 'server pool.ntp.org iburst'
+        state: present
+    - name: Restart NTP service
+      systemd:
+        name: ntp
+        state: restarted
+        enabled: true    
